@@ -25,13 +25,14 @@ ENV APPUID=1000
 ENV APPGID=1000
 
 RUN useradd \
-    node
-RUN useradd \
     --home "/app" \
     --create-home \
     --user-group \
     --uid "$APPUID" \
     "$APPUSER"
+    
+RUN useradd \
+    node
 
 WORKDIR /app
 USER appuser
