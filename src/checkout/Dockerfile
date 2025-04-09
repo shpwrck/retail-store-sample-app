@@ -25,6 +25,8 @@ ENV APPUID=1000
 ENV APPGID=1000
 
 RUN useradd \
+    node
+RUN useradd \
     --home "/app" \
     --create-home \
     --user-group \
@@ -32,7 +34,6 @@ RUN useradd \
     "$APPUSER"
 
 WORKDIR /app
-USER node
 USER appuser
 
 COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
