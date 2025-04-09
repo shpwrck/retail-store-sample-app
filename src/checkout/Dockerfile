@@ -32,6 +32,7 @@ RUN useradd \
     "$APPUSER"
 
 WORKDIR /app
+USER node
 USER appuser
 
 COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
