@@ -56,6 +56,10 @@ RUN useradd \
     --uid "$APPUID" \
     "$APPUSER"
 
+# OpenShift runs containers as an arbitrary user ID in the root group (GID 0),
+# so give that group the same access to /app as the app user.
+RUN chgrp 0 /app && chmod g=u /app
+
 ENV JAVA_TOOL_OPTIONS=
 ENV SPRING_PROFILES_ACTIVE=prod
 
@@ -63,7 +67,7 @@ WORKDIR /app
 USER appuser
 
 COPY ./ATTRIBUTION.md ./LICENSES.md
-COPY --chown=appuser:appuser --from=build-env /app.jar .
+COPY --chown=appuser:0 --from=build-env /app.jar .
 
 EXPOSE 8080
 

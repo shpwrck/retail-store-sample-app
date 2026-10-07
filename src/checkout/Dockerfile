@@ -31,10 +31,14 @@ RUN useradd \
     --uid "$APPUID" \
     "$APPUSER"
 
+# OpenShift runs containers as an arbitrary user ID in the root group (GID 0),
+# so give that group the same access to /app as the app user.
+RUN chgrp 0 /app && chmod g=u /app
+
 WORKDIR /app
 USER appuser
 
-COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
-COPY --chown=node:node --from=build /usr/src/app/dist ./dist
+COPY --chown=appuser:0 --from=build /usr/src/app/node_modules ./node_modules
+COPY --chown=appuser:0 --from=build /usr/src/app/dist ./dist
 
 ENTRYPOINT [ "node", "dist/main.js" ]
