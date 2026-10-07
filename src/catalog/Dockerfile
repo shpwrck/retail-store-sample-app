@@ -45,10 +45,14 @@ RUN useradd \
     --uid "$APPUID" \
     "$APPUSER"
 
+# OpenShift runs containers as an arbitrary user ID in the root group (GID 0),
+# so give that group the same access to /app as the app user.
+RUN chgrp 0 /app && chmod g=u /app
+
 WORKDIR /app
 USER appuser
 
-COPY --chown=appuser:appuser --from=build-env /appsrc/main /app/
+COPY --chown=appuser:0 --from=build-env /appsrc/main /app/
 
 COPY ./ATTRIBUTION.md ./LICENSES.md
 
